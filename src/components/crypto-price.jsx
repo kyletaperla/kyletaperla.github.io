@@ -12,9 +12,11 @@ const CryptoPrice = () => {
     const minute_ms = 60000;
 
     useEffect(() => {
+        getCryptoPrice();
+
         const interval = setInterval(() => {
             getCryptoPrice();
-          }, minute_ms);
+        }, minute_ms);
         
           return () => clearInterval(interval);
     }, [])
