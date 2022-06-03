@@ -5,32 +5,35 @@ export { useStore }
 
 const useStore = create((set, get) => ({
     cryptocurrencies: [
-        {key: 0, value:'ethereum', cryptoPrice: null},
-        {key: 1, value:'bitcoin', cryptoPrice: null},
-        {key: 2, value:'dogecoin', cryptoPrice: null},
-        {key: 3, value:'shibainu', cryptoPrice: null}
+        {key: 0, value:'ethereum'},
+        {key: 1, value:'bitcoin'},
+        {key: 2, value:'dogecoin'},
+        {key: 3, value:'solana'},
+        {key: 4, value:'cardano'},
+        {key: 5, value:'zilliqa'},
+        {key: 6, value:'polkadot'},
+        {key: 7, value:'apecoin'}
     ],
-    getCryptoPrice: (crypto) => {
-      axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=usd`)
-      .then((response) => {
-        set(state => {
-            let cryptocurrencies = state.cryptocurrencies;
-            let result = Object.values(response.data)[0];
-
-            (cryptocurrencies || []).map(c => {
-                if (c.value === crypto) {
-                    console.log(result.usd);
-                    c.cryptoPrice = result.usd;
-                }
-            })
-
-            return {
-                cryptocurrencies: cryptocurrencies
+    cryptoPrices: {},
+    getCryptoPrices: () => {
+        let cryptocurrencies = get().cryptocurrencies;
+        let coins = '';
+        
+        (cryptocurrencies || []).forEach((c, i) => {
+            if(i === 0) {
+                coins += c.value;
+            } else {
+                coins = coins + '%2C' + c.value;
             }
         })
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+
+        axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coins}&vs_currencies=usd`)
+            .then((response) => {
+                set({cryptoPrices: response.data});
+                console.log(get().cryptoPrices);
+            })
+            .catch((error) => {
+            })
+
     }
 }))

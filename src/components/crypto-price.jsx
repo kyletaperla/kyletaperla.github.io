@@ -1,49 +1,48 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./crypto-price.css";
 import { useStore as useCryptoStore } from './crypto-price-store';
 
-import ethereum from '../images/ethereum.png';
-import bitcoin from '../images/bitcoin.png';
-
 export { CryptoPrice }
 
 const CryptoPrice = () => {
-    const cryptocurrencies = useCryptoStore(state => state.cryptocurrencies);
+    const { cryptoPrices } = useCryptoStore(state => state);
+
     return (
-        <>{(cryptocurrencies || []).map(c => <CryptoPriceCard key={c.key} crypto={c.value} price={c.cryptoPrice} />)}</>
+        <div className='wrapper'>
+            <div className='row'>
+                <div className='col-12 col-md-4 col-lg-4'>
+                    <input type='text' className='form-control'></input>
+                </div>
+            </div>
+            <div className='row'>
+            {(Object.keys(cryptoPrices) || []).map(c => (
+                <div className='col-12 col-md-3 col-lg-3'>
+                <CryptoPriceCard key={c} name={c} crypto={cryptoPrices[c]} />
+                </div>
+            ))}
+            </div>
+        </div>
+
     )
 }
 
-const CryptoPriceCard = ({ crypto, price }) => {
-    const { getCryptoPrice } = useCryptoStore(state => state);
-    const minute_ms = 60000;
-
-    useEffect(() => {
-        getCryptoPrice(crypto);
-
-        const interval = setInterval(() => {
-            getCryptoPrice(crypto);
-        }, minute_ms);
-        
-          return () => clearInterval(interval);
-    }, [])
-    
+const CryptoPriceCard = ({ name, crypto }) => {
     return (
         <div className='card'>
             <div className='row'>
                 <div className='col-12 col-md-6 col-lg-12'>
-                    <img src={require(`../images/${crypto}.png`)}></img>
+                    <img src={require(`../images/${name}.png`)}></img>
                 </div>
             </div>
             <div className='row'>
                 <div className='col-12 col-md-6 col-lg-12'> 
-                    <span>{crypto}</span>
+                    <span>{name}</span>
                 </div>
             </div>
             <div className='row'>
                 <div className='col-12 col-md-6 col-lg-12'>
-                    {price ? <span className='subtitle'>{`$${price}`}</span>: null}
+                    <span className='subtitle'>{`$${crypto.usd}`}</span>
                 </div>
             </div>
         </div>

@@ -1,11 +1,12 @@
 import './App.css';
-import { CryptoPrice } from './components/crypto-price';
+import { CryptoPriceContainer } from './containers/crypto-price-container';
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
-        <CryptoPrice />
+        <CryptoPriceContainer />
       </header>
     </div>
   );
