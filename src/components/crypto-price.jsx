@@ -33,8 +33,6 @@ const CryptoSearch = () => {
 
     useEffect(() => {
         filterCryptoResults(searchString);
-        // const timeout = setTimeout(() => filterCryptoResults(searchString), 1000);
-        // return () => clearTimeout(timeout);
     }, [searchString])
 
     const onSearch = (e) => {
