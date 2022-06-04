@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./crypto-price.css";
 import { useStore as useCryptoStore } from './crypto-price-store';
@@ -6,24 +6,43 @@ import { useStore as useCryptoStore } from './crypto-price-store';
 export { CryptoPrice }
 
 const CryptoPrice = () => {
-    const { cryptoPrices } = useCryptoStore(state => state);
+    const { filtered } = useCryptoStore(state => state);
 
     return (
         <div className='wrapper'>
             <div className='row'>
                 <div className='col-12 col-md-4 col-lg-4'>
-                    <input type='text' className='form-control'></input>
+                    <CryptoSearch />
                 </div>
             </div>
             <div className='row'>
-            {(Object.keys(cryptoPrices) || []).map(c => (
+            {(Object.keys(filtered) || []).map(c => (
                 <div className='col-12 col-md-3 col-lg-3'>
-                <CryptoPriceCard key={c} name={c} crypto={cryptoPrices[c]} />
+                    <CryptoPriceCard key={c} name={c} crypto={filtered[c]} />
                 </div>
             ))}
             </div>
         </div>
 
+    )
+}
+
+const CryptoSearch = () => {
+    const [ searchString, setSearchString ] = useState('');
+    const filterCryptoResults = useCryptoStore(state => state.filterCryptoResults);
+
+    useEffect(() => {
+        filterCryptoResults(searchString);
+        // const timeout = setTimeout(() => filterCryptoResults(searchString), 1000);
+        // return () => clearTimeout(timeout);
+    }, [searchString])
+
+    const onSearch = (e) => {
+
+    }
+
+    return (
+        <input type='text' className='form-control' onChange={e => setSearchString(e.target.value)}></input>
     )
 }
 

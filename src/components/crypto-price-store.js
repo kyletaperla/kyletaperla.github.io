@@ -15,6 +15,7 @@ const useStore = create((set, get) => ({
         {key: 7, value:'apecoin'}
     ],
     cryptoPrices: {},
+    filtered: {},
     getCryptoPrices: () => {
         let cryptocurrencies = get().cryptocurrencies;
         let coins = '';
@@ -29,11 +30,25 @@ const useStore = create((set, get) => ({
 
         axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coins}&vs_currencies=usd`)
             .then((response) => {
-                set({cryptoPrices: response.data});
-                console.log(get().cryptoPrices);
+                set({cryptoPrices: response.data, filtered: response.data});
             })
             .catch((error) => {
             })
+    },
+    filterCryptoResults: (searchString) => {
+        if (!searchString) {
+            get().getCryptoPrices();
+        }
 
+        let names = (Object.keys(get().cryptoPrices) || []).filter(c => c.includes(searchString));
+        let filtered = {...get().cryptoPrices};
+
+        for (var prop in filtered) {
+            if (!names.includes(prop)) {
+                delete filtered[prop];
+            }
+        }
+
+        set({filtered: filtered});
     }
 }))
