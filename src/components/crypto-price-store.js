@@ -30,10 +30,41 @@ const useStore = create((set, get) => ({
 
         axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coins}&vs_currencies=usd`)
             .then((response) => {
-                set({cryptoPrices: response.data, filtered: response.data});
+                get().setCryptoPrices(response.data);
             })
             .catch((error) => {
             })
+    },
+    setCryptoPrices: (cryptoPrices) => {
+        set(state => {
+            // Link: https://stackoverflow.com/questions/1359761/sorting-a-javascript-object-by-property-name
+            // Title: Sorting a JavaScript object by property name
+            // Date: 06/03/2022
+            // Comments: I thought this solution was pretty cool but the guy does say in the post that this won't always work. "By definition, the order
+            // of keys in an object is undefined. Think about sorting these keys when the object is actually being displayed to the user. Whatever sort order it uses
+            // internally doesn't matter anyway."
+            
+            var sorted = {},
+            key, a = [];
+        
+            for (key in cryptoPrices) {
+                if (cryptoPrices.hasOwnProperty(key)) {
+                    a.push(key);
+                }
+            }
+        
+            a.sort();
+        
+            for (key = 0; key < a.length; key++) {
+                sorted[a[key]] = cryptoPrices[a[key]];
+            }
+
+            return {
+                cryptoPrices: sorted,
+                filtered: sorted
+            }
+
+        })
     },
     filterCryptoResults: (searchString) => {
         if (!searchString) {
